@@ -52,7 +52,7 @@ BALASAN ANDA (Sebagai Rendy):`;
                             { role: "system", content: "You are Rendy's AI clone." },
                             { role: "user", content: prompt }
                         ],
-                        model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+                        model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
                         temperature: 0.7,
                         max_tokens: 500,
                     });
