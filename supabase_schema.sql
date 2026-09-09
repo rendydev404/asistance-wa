@@ -1,22 +1,50 @@
 -- Mengaktifkan ekstensi pgvector
 create extension if not exists vector;
+create extension if not exists pgcrypto;
 
 -- Tabel untuk Knowledge Base
 create table if not exists public.knowledge_base (
   id uuid default gen_random_uuid() primary key,
   question text,
   answer text not null,
-  embedding vector(768), -- Gemini text-embedding-004 menghasilkan 768 dimensi
+  -- Dibiarkan nullable untuk kompatibilitas data lama. Retrieval baru memakai FTS.
+  embedding vector(768),
+  search_vector tsvector generated always as (
+    to_tsvector('simple', coalesce(question, '') || ' ' || answer)
+  ) stored,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+alter table public.knowledge_base add column if not exists search_vector tsvector
+  generated always as (to_tsvector('simple', coalesce(question, '') || ' ' || answer)) stored;
+
+create index if not exists knowledge_base_search_vector_idx
+  on public.knowledge_base using gin(search_vector);
 
 -- Tabel untuk Manajemen State / Sesi Chat
 create table if not exists public.chat_sessions (
   phone_number text primary key,
   status text not null default 'waiting', -- 'human', 'waiting', 'ai_active'
+  pending_message_id text,
   last_message_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  constraint chat_sessions_status_check check (status in ('human', 'waiting', 'ai_active'))
+);
+
+alter table public.chat_sessions add column if not exists pending_message_id text;
+
+create table if not exists public.chat_messages (
+  id uuid default gen_random_uuid() primary key,
+  message_id text not null unique,
+  phone_number text not null,
+  direction text not null check (direction in ('inbound', 'outbound')),
+  text text not null,
+  status text not null default 'received',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+create index if not exists chat_messages_phone_created_idx
+  on public.chat_messages(phone_number, created_at desc);
 
 -- Tabel untuk Pengaturan (seperti Prompt Persona)
 create table if not exists public.app_settings (
@@ -60,3 +88,32 @@ as $$
   order by similarity desc
   limit match_count;
 $$;
+
+-- Retrieval tanpa provider embedding eksternal. Cocok untuk Groq-only deployment.
+create or replace function search_knowledge (
+  query_text text,
+  match_count int default 3
+)
+returns table (
+  id uuid,
+  question text,
+  answer text,
+  relevance real
+)
+language sql stable
+as $$
+  select
+    knowledge_base.id,
+    knowledge_base.question,
+    knowledge_base.answer,
+    ts_rank_cd(knowledge_base.search_vector, plainto_tsquery('simple', query_text)) as relevance
+  from public.knowledge_base
+  where knowledge_base.search_vector @@ plainto_tsquery('simple', query_text)
+  order by relevance desc, knowledge_base.created_at desc
+  limit greatest(match_count, 1);
+$$;
+
+alter table public.knowledge_base enable row level security;
+alter table public.chat_sessions enable row level security;
+alter table public.chat_messages enable row level security;
+alter table public.app_settings enable row level security;

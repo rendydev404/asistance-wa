@@ -1,9 +1,10 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import PersonaForm from './PersonaForm';
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function PersonaPage() {
+  const supabaseAdmin = getSupabaseAdmin();
   const { data } = await supabaseAdmin
     .from('app_settings')
     .select('value')

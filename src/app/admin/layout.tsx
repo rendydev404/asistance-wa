@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Home, BookOpen, Settings, MessageSquare } from 'lucide-react';
+import LogoutButton from './LogoutButton';
 
 export default function AdminLayout({
   children,
@@ -11,7 +12,10 @@ export default function AdminLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md flex flex-col">
         <div className="p-4 border-b">
-          <h1 className="text-xl font-bold text-gray-800">WA AI Admin</h1>
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="text-xl font-bold text-gray-800">WA AI Admin</h1>
+            <LogoutButton />
+          </div>
         </div>
         <nav className="flex-1 p-4 space-y-2">
           <Link href="/admin" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">

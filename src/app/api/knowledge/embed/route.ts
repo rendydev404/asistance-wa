@@ -1,30 +1,25 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import { getSupabaseAdmin } from '@/lib/supabase';
+import { isAdminAuthorized } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
+    if (!isAdminAuthorized(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { question, answer } = await req.json();
 
     if (!answer) {
       return NextResponse.json({ error: 'Jawaban wajid diisi' }, { status: 400 });
     }
 
-    // Gabungkan text untuk di embed.
-    const textToEmbed = `Pertanyaan: ${question || 'Informasi'}\nJawaban/Fakta: ${answer}`;
-
-    // Get embedding dari Gemini
-    const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
-    const result = await model.embedContent(textToEmbed);
-    const embedding = result.embedding.values;
-
-    // Simpan ke Supabase
-    const { data, error } = await supabaseAdmin
+    // Groq menyediakan chat completion, bukan embedding. Retrieval dilakukan
+    // oleh PostgreSQL full-text search melalui search_vector.
+    const { data, error } = await getSupabaseAdmin()
       .from('knowledge_base')
       .insert([
-        { question, answer, embedding }
+        { question: question || null, answer }
       ])
       .select()
       .single();
@@ -32,20 +27,25 @@ export async function POST(req: Request) {
     if (error) throw error;
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Embed API Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
 export async function DELETE(req: Request) {
   try {
+    if (!isAdminAuthorized(req)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (!id) return NextResponse.json({ error: 'ID tidak ditemukan' }, { status: 400 });
 
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from('knowledge_base')
       .delete()
       .eq('id', id);
@@ -53,8 +53,9 @@ export async function DELETE(req: Request) {
     if (error) throw error;
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Delete API Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

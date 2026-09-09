@@ -1,9 +1,10 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 import KnowledgeList from './KnowledgeList';
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function KnowledgePage() {
+  const supabaseAdmin = getSupabaseAdmin();
   const { data: knowledgeItems } = await supabaseAdmin
     .from('knowledge_base')
     .select('id, question, answer, created_at')

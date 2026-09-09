@@ -1,10 +1,106 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+type KnowledgeBaseRow = {
+  id: string;
+  question: string | null;
+  answer: string;
+  embedding: number[] | null;
+  created_at: string;
+  search_vector: string | null;
+};
 
-// Client untuk akses publik (seperti frontend)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export type Database = {
+  public: {
+    Tables: {
+      knowledge_base: {
+        Row: KnowledgeBaseRow;
+        Insert: Partial<KnowledgeBaseRow> & Pick<KnowledgeBaseRow, 'answer'>;
+        Update: Partial<KnowledgeBaseRow>;
+        Relationships: [];
+      };
+      chat_sessions: {
+        Row: {
+          phone_number: string;
+          status: 'human' | 'waiting' | 'ai_active';
+          pending_message_id: string | null;
+          last_message_at: string;
+          created_at: string;
+        };
+        Insert: {
+          phone_number: string;
+          status?: 'human' | 'waiting' | 'ai_active';
+          pending_message_id?: string | null;
+          last_message_at?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['chat_sessions']['Insert']>;
+        Relationships: [];
+      };
+      chat_messages: {
+        Row: {
+          id: string;
+          message_id: string;
+          phone_number: string;
+          direction: 'inbound' | 'outbound';
+          text: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          message_id: string;
+          phone_number: string;
+          direction: 'inbound' | 'outbound';
+          text: string;
+          status?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['chat_messages']['Insert']>;
+        Relationships: [];
+      };
+      app_settings: {
+        Row: { key: string; value: string };
+        Insert: { key: string; value: string };
+        Update: Partial<{ key: string; value: string }>;
+        Relationships: [];
+      };
+    };
+    Views: Record<string, never>;
+    Functions: {
+      search_knowledge: {
+        Args: { query_text: string; match_count?: number };
+        Returns: Array<{ id: string; question: string | null; answer: string; relevance: number }>;
+      };
+    };
+  };
+};
 
-// Client dengan hak akses Service Role untuk operasi di server (melewati RLS)
-export const supabaseAdmin = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+function requiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
+  return value;
+}
+
+let publicClient: SupabaseClient<Database> | undefined;
+let adminClient: SupabaseClient<Database> | undefined;
+
+export function getSupabasePublic() {
+  if (!publicClient) {
+    publicClient = createClient<Database>(
+      requiredEnv('NEXT_PUBLIC_SUPABASE_URL'),
+      requiredEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
+    );
+  }
+  return publicClient;
+}
+
+// Server-only client. Never expose this client or its key to browser code.
+export function getSupabaseAdmin() {
+  if (!adminClient) {
+    adminClient = createClient<Database>(
+      requiredEnv('NEXT_PUBLIC_SUPABASE_URL'),
+      requiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    );
+  }
+  return adminClient;
+}

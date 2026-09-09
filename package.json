@@ -7,14 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "bot": "npx tsc src/bot/index.ts src/bot/state-manager.ts src/bot/ai-handler.ts --module commonjs --esModuleInterop --skipLibCheck --outDir dist/bot && node dist/bot/index.js"
+    "bot:build": "tsc src/bot/index.ts src/bot/state-manager.ts src/bot/ai-handler.ts src/bot/session-store.ts --module commonjs --target es2020 --esModuleInterop --skipLibCheck --outDir dist",
+    "bot": "node dist/bot/index.js"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.108.2",
     "@whiskeysockets/baileys": "^7.0.0-rc13",
     "dotenv": "^17.4.2",
-    "groq-sdk": "^1.3.0",
+    "groq-sdk": "^1.6.0",
     "lucide-react": "^1.21.0",
     "next": "16.2.9",
     "pino": "^10.3.1",

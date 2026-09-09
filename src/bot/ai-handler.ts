@@ -1,21 +1,29 @@
 import Groq from 'groq-sdk';
+import { getSupabaseAdmin } from '../lib/supabase';
 
 // Initialize Groq (Will need process.env.GROQ_API_KEY)
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
 
 export class AIHandler {
     
-    /**
-     * Searches for relevant facts in Supabase based on the user's message
-     */
     private async findRelevantFacts(message: string): Promise<string> {
-        // TODO: Implement Supabase vector search using pgvector
-        // For now, return a placeholder string or empty
-        return "Fakta: Ini adalah prototipe asisten AI Rendy.";
+        const { data, error } = await getSupabaseAdmin().rpc('search_knowledge', {
+            query_text: message,
+            match_count: 3,
+        });
+
+        if (error) throw error;
+        if (!data?.length) return 'Tidak ada fakta spesifik ditemukan.';
+
+        return data
+            .map((item: { question: string | null; answer: string }) =>
+                `Q: ${item.question || '-'}\nA: ${item.answer}`,
+            )
+            .join('\n\n');
     }
 
     /**
-     * Generates a reply using Google Gemini based on the message and relevant facts
+     * Generates a reply using Groq based on the message and relevant facts
      */
     public async generateReply(message: string): Promise<string> {
         try {
@@ -34,8 +42,8 @@ PERTANYAAN DARI TEMAN:
 
 BALASAN ANDA (Sebagai Rendy):`;
 
-            let retries = 5;
-            let delay = 3000;
+            let retries = 3;
+            let delay = 1500;
             
             while (retries > 0) {
                 try {
@@ -44,13 +52,18 @@ BALASAN ANDA (Sebagai Rendy):`;
                             { role: "system", content: "You are Rendy's AI clone." },
                             { role: "user", content: prompt }
                         ],
-                        model: "llama-3.3-70b-versatile",
+                        model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
                         temperature: 0.7,
+                        max_tokens: 500,
                     });
                     
                     return completion.choices[0]?.message?.content || "";
-                } catch (error: any) {
-                    if ((error?.status === 503 || error?.status === 429 || error?.message?.includes("503") || error?.message?.includes("429")) && retries > 1) {
+                } catch (error: unknown) {
+                    const status = typeof error === 'object' && error !== null && 'status' in error
+                        ? error.status
+                        : undefined;
+                    const message = error instanceof Error ? error.message : String(error);
+                    if ((status === 503 || status === 429 || message.includes('503') || message.includes('429')) && retries > 1) {
                         console.log(`[AI] Server overloaded or rate limited. Retrying in ${delay/1000}s... (${retries - 1} retries left)`);
                         await new Promise(res => setTimeout(res, delay));
                         retries--;

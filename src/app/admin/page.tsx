@@ -1,8 +1,9 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase';
 
-export const revalidate = 0; // Disable caching
+export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
+  const supabaseAdmin = getSupabaseAdmin();
   const { count: kbCount } = await supabaseAdmin
     .from('knowledge_base')
     .select('*', { count: 'exact', head: true });

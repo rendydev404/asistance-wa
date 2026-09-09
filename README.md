@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rendy WhatsApp AI
+
+Admin panel Next.js dan bot WhatsApp Baileys yang berjalan sebagai dua container di VPS. Groq digunakan untuk generate balasan; knowledge base dicari menggunakan PostgreSQL full-text search.
 
 ## Getting Started
 
@@ -15,6 +17,24 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Menjalankan dengan Docker di VPS
+
+1. Salin `.env.example` menjadi `.env`, lalu isi Supabase, Groq, dan secret admin.
+2. Jalankan `supabase_schema.sql` di SQL Editor Supabase.
+3. Build dan jalankan container:
+
+```bash
+docker compose up -d --build
+docker compose logs -f bot
+```
+
+4. Buka `http://IP-VPS:3000`, login, lalu kelola Knowledge Base.
+5. Scan QR yang tampil di log bot dari WhatsApp → Linked devices.
+
+Auth Baileys disimpan di volume Docker `baileys_auth`, sehingga restart container tidak meminta QR ulang. Jangan menghapus volume tersebut kecuali ingin login ulang.
+
+Untuk production, gunakan reverse proxy HTTPS di depan port 3000 dan batasi port VPS menggunakan firewall.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

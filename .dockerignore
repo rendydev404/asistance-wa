@@ -1,0 +1,7 @@
+node_modules
+.next
+dist
+.git
+.env*
+auth_info_baileys
+npm-debug.log*
