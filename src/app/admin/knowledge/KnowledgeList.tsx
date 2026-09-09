@@ -62,7 +62,7 @@ export default function KnowledgeList({ initialItems }: { initialItems: KBItem[]
     <div className="space-y-5">
       {/* Form Tambah */}
       <form onSubmit={handleAdd} className="rounded-[2rem] border border-white/8 bg-[#0e1c2d] p-5 shadow-xl shadow-black/10 sm:p-6">
-        <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-teal-300/12 text-teal-200"><BookOpen className="h-5 w-5" aria-hidden="true" /></span><div><h2 className="text-lg font-semibold text-white">Tambah fakta</h2><p className="mt-1 text-sm leading-5 text-slate-400">Tulis satu informasi yang bisa langsung dirujuk AI.</p></div></div>
+        <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-300/12 text-indigo-200"><BookOpen className="h-5 w-5" aria-hidden="true" /></span><div><h2 className="text-lg font-semibold text-white">Tambah fakta</h2><p className="mt-1 text-sm leading-5 text-slate-400">Tulis satu informasi yang bisa langsung dirujuk AI.</p></div></div>
         
         <div className="mt-6 space-y-4">
         <div>
@@ -73,7 +73,7 @@ export default function KnowledgeList({ initialItems }: { initialItems: KBItem[]
             value={question}
             onChange={e => setQuestion(e.target.value)}
             placeholder="Contoh: Berapa harga pembuatan website?"
-            className="min-h-12 w-full rounded-2xl border border-white/10 bg-slate-950/45 px-4 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-teal-300/60"
+            className="min-h-12 w-full rounded-2xl border border-white/10 bg-slate-950/45 px-4 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-indigo-300/60"
           />
         </div>
         
@@ -86,14 +86,14 @@ export default function KnowledgeList({ initialItems }: { initialItems: KBItem[]
             onChange={e => setAnswer(e.target.value)}
             rows={3}
             placeholder="Contoh: Harga mulai dari Rp5.000.000, tergantung fitur yang dipilih."
-            className="w-full resize-y rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm leading-6 text-white placeholder:text-slate-600 outline-none transition focus:border-teal-300/60"
+            className="w-full resize-y rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm leading-6 text-white placeholder:text-slate-600 outline-none transition focus:border-indigo-300/60"
           />
         </div>
         
         <button 
           type="submit" 
           disabled={loading}
-          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-teal-300 px-5 text-sm font-bold text-slate-950 transition hover:bg-teal-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-indigo-300 px-5 text-sm font-bold text-slate-950 transition hover:bg-indigo-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           {loading ? <><LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" /> Menyimpan fakta...</> : (
             <>
@@ -106,10 +106,10 @@ export default function KnowledgeList({ initialItems }: { initialItems: KBItem[]
 
       {/* Daftar */}
       <div className="overflow-hidden rounded-[2rem] border border-white/8 bg-[#0e1c2d]">
-        <div className="flex items-center justify-between border-b border-white/8 px-5 py-4 sm:px-6"><div><h2 className="font-semibold text-white">Fakta tersimpan</h2><p className="mt-1 text-xs text-slate-500">{items.length} item tersedia untuk AI</p></div><Check className="h-5 w-5 text-teal-300" aria-hidden="true" /></div>
+        <div className="flex items-center justify-between border-b border-white/8 px-5 py-4 sm:px-6"><div><h2 className="font-semibold text-white">Fakta tersimpan</h2><p className="mt-1 text-xs text-slate-500">{items.length} item tersedia untuk AI</p></div><Check className="h-5 w-5 text-indigo-300" aria-hidden="true" /></div>
         <div className="divide-y divide-white/8 md:hidden">
           {items.length === 0 ? <p className="p-6 text-sm text-slate-500">Belum ada fakta. Tambahkan yang pertama di atas.</p> : items.map((item) => (
-            <article key={item.id} className="p-5"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-xs font-bold uppercase tracking-wider text-teal-300">{item.question || 'Fakta umum'}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-300">{item.answer}</p></div><button onClick={() => handleDelete(item.id)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 transition hover:bg-red-400/10 hover:text-red-300" aria-label="Hapus fakta"><Trash2 className="h-4 w-4" aria-hidden="true" /></button></div></article>
+            <article key={item.id} className="p-5"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-xs font-bold uppercase tracking-wider text-indigo-300">{item.question || 'Fakta umum'}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-300">{item.answer}</p></div><button onClick={() => handleDelete(item.id)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 transition hover:bg-red-400/10 hover:text-red-300" aria-label="Hapus fakta"><Trash2 className="h-4 w-4" aria-hidden="true" /></button></div></article>
           ))}
         </div>
         <table className="hidden min-w-full divide-y divide-white/8 md:table">

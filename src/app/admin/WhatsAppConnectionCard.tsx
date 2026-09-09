@@ -47,31 +47,31 @@ export default function WhatsAppConnectionCard() {
 
   const copy = {
     starting: { label: 'Menghubungkan', icon: LoaderCircle, tone: 'text-amber-200', badge: 'bg-amber-300/12' },
-    qr: { label: 'Siap dipindai', icon: QrCode, tone: 'text-cyan-200', badge: 'bg-cyan-300/12' },
-    connected: { label: 'Terhubung', icon: Wifi, tone: 'text-teal-200', badge: 'bg-teal-300/12' },
+    qr: { label: 'Siap dipindai', icon: QrCode, tone: 'text-violet-200', badge: 'bg-violet-300/12' },
+    connected: { label: 'Terhubung', icon: Wifi, tone: 'text-indigo-200', badge: 'bg-indigo-300/12' },
     disconnected: { label: 'Terputus', icon: WifiOff, tone: 'text-red-200', badge: 'bg-red-300/12' },
     error: { label: 'Perlu dicek', icon: WifiOff, tone: 'text-red-200', badge: 'bg-red-300/12' },
   }[state.status];
   const StatusIcon = copy.icon;
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-teal-200/12 bg-[radial-gradient(circle_at_top_right,_rgba(45,212,191,0.16),_transparent_38%),linear-gradient(135deg,#10283b,#0b1728_62%,#101b31)] p-5 shadow-2xl shadow-black/15 sm:p-7" aria-live="polite">
+    <section className="relative overflow-hidden rounded-[2rem] border border-indigo-200/12 bg-[radial-gradient(circle_at_top_right,_rgba(129,140,248,0.18),_transparent_38%),linear-gradient(135deg,#172449,#0b1728_62%,#101b31)] p-5 shadow-2xl shadow-black/15 sm:p-7" aria-live="polite">
       <div className="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-teal-200"><span className="h-2 w-2 animate-pulse rounded-full bg-teal-300" /> WhatsApp gateway</div>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-indigo-200"><span className="h-2 w-2 animate-pulse rounded-full bg-indigo-300" /> WhatsApp gateway</div>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Koneksi perangkat</h2>
           <p className={`mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold ${copy.tone} ${copy.badge}`}><StatusIcon className={`h-4 w-4 ${state.status === 'starting' ? 'animate-spin' : ''}`} aria-hidden="true" /> {copy.label}</p>
           {state.phone_number && (
             <p className="mt-3 text-sm text-slate-300">Nomor aktif <span className="font-semibold text-white">{state.phone_number}</span></p>
           )}
         </div>
-        {state.status === 'connected' && <div className="flex items-center gap-2 text-xs font-medium text-teal-200"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Siap menerima pesan</div>}
+        {state.status === 'connected' && <div className="flex items-center gap-2 text-xs font-medium text-indigo-200"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Siap menerima pesan</div>}
       </div>
 
       {state.status === 'qr' && state.qr && (
         <div className="relative mt-7 grid gap-6 rounded-3xl border border-white/10 bg-slate-950/25 p-4 sm:grid-cols-[auto_1fr] sm:items-center sm:p-5">
-          <div className="mx-auto rounded-2xl bg-white p-3 shadow-2xl shadow-cyan-950/30"><Image src={state.qr} alt="QR code untuk menautkan WhatsApp" width={256} height={256} unoptimized className="h-56 w-56 sm:h-64 sm:w-64" /></div>
-          <div className="sm:pr-5"><p className="flex items-center gap-2 text-sm font-semibold text-white"><Smartphone className="h-4 w-4 text-cyan-200" aria-hidden="true" /> Tautkan dari WhatsApp</p><p className="mt-2 text-sm leading-6 text-slate-400">Buka WhatsApp di ponsel, masuk ke <span className="text-slate-200">Perangkat tertaut</span>, lalu pilih <span className="text-slate-200">Tautkan perangkat</span>.</p><p className="mt-4 text-xs font-medium text-cyan-200">QR berganti otomatis jika kedaluwarsa.</p></div>
+          <div className="mx-auto rounded-2xl bg-white p-3 shadow-2xl shadow-indigo-950/30"><Image src={state.qr} alt="QR code untuk menautkan WhatsApp" width={256} height={256} unoptimized className="h-56 w-56 sm:h-64 sm:w-64" /></div>
+          <div className="sm:pr-5"><p className="flex items-center gap-2 text-sm font-semibold text-white"><Smartphone className="h-4 w-4 text-violet-200" aria-hidden="true" /> Tautkan dari WhatsApp</p><p className="mt-2 text-sm leading-6 text-slate-400">Buka WhatsApp di ponsel, masuk ke <span className="text-slate-200">Perangkat tertaut</span>, lalu pilih <span className="text-slate-200">Tautkan perangkat</span>.</p><p className="mt-4 text-xs font-medium text-violet-200">QR berganti otomatis jika kedaluwarsa.</p></div>
         </div>
       )}
 

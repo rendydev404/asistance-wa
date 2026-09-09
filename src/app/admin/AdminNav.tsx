@@ -31,7 +31,7 @@ export default function AdminNav() {
               aria-current={active ? 'page' : undefined}
               className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 text-sm font-medium transition ${
                 active
-                  ? 'bg-teal-300 text-slate-950 shadow-[0_8px_24px_rgba(94,234,212,0.18)]'
+                  ? 'bg-indigo-300 text-slate-950 shadow-[0_8px_24px_rgba(129,140,248,0.2)]'
                   : 'text-slate-300 hover:bg-white/8 hover:text-white'
               }`}
             >
@@ -54,7 +54,7 @@ export default function AdminNav() {
               href={href}
               aria-current={active ? 'page' : undefined}
               className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-2xl text-[10px] font-semibold transition ${
-                active ? 'bg-teal-300 text-slate-950' : 'text-slate-400 hover:text-white'
+                active ? 'bg-indigo-300 text-slate-950' : 'text-slate-400 hover:text-white'
               }`}
             >
               <Icon className="h-4 w-4" aria-hidden="true" />

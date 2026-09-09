@@ -12,7 +12,7 @@ export default function AdminLayout({
     <div className="min-h-screen bg-[#07111f] text-slate-100 md:flex">
       <aside className="hidden w-72 shrink-0 border-r border-white/8 bg-[#091625] p-5 md:flex md:flex-col">
         <div className="mb-10 flex items-center gap-3 px-2">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-300 text-slate-950 shadow-lg shadow-teal-300/10">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-300 text-slate-950 shadow-lg shadow-indigo-300/10">
             <Bot className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
@@ -22,10 +22,10 @@ export default function AdminLayout({
         </div>
         <AdminNav />
         <div className="mt-auto rounded-2xl border border-white/8 bg-white/4 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Live workspace</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300">Live workspace</p>
           <p className="mt-2 text-sm leading-5 text-slate-300">Pantau koneksi dan atur perilaku AI dari satu tempat.</p>
           <div className="mt-4 flex items-center justify-between">
-            <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-teal-200">
+            <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-indigo-200">
               Buka aplikasi <ExternalLink className="h-4 w-4" aria-hidden="true" />
             </Link>
             <LogoutButton />
@@ -36,7 +36,7 @@ export default function AdminLayout({
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-white/8 bg-[#091625]/80 px-4 py-4 backdrop-blur md:hidden">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-300 text-slate-950"><Bot className="h-5 w-5" aria-hidden="true" /></span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-300 text-slate-950"><Bot className="h-5 w-5" aria-hidden="true" /></span>
             <span className="text-sm font-semibold text-white">Asist WA</span>
           </Link>
           <LogoutButton />
