@@ -16,12 +16,16 @@ function isActive(pathname: string, href: string) {
   return href === '/admin' ? pathname === href : pathname.startsWith(href);
 }
 
-export default function AdminNav() {
+type AdminNavProps = {
+  variant: 'desktop' | 'mobile';
+};
+
+export default function AdminNav({ variant }: AdminNavProps) {
   const pathname = usePathname();
 
-  return (
-    <>
-      <nav className="hidden gap-2 md:flex md:flex-col" aria-label="Navigasi utama">
+  if (variant === 'desktop') {
+    return (
+      <nav className="flex flex-col gap-2" aria-label="Navigasi utama">
         {items.map(({ href, label, icon: Icon }) => {
           const active = isActive(pathname, href);
           return (
@@ -41,7 +45,10 @@ export default function AdminNav() {
           );
         })}
       </nav>
+    );
+  }
 
+  return (
       <nav
         className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-3xl border border-white/12 bg-slate-900/95 p-1.5 shadow-2xl shadow-black/40 backdrop-blur-xl md:hidden"
         aria-label="Navigasi mobile"
@@ -63,6 +70,5 @@ export default function AdminNav() {
           );
         })}
       </nav>
-    </>
   );
 }

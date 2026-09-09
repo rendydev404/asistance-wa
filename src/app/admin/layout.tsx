@@ -20,7 +20,7 @@ export default function AdminLayout({
             <p className="text-xs text-slate-500">Admin console</p>
           </div>
         </div>
-        <AdminNav />
+        <AdminNav variant="desktop" />
         <div className="mt-auto rounded-2xl border border-white/8 bg-white/4 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300">Live workspace</p>
           <p className="mt-2 text-sm leading-5 text-slate-300">Pantau koneksi dan atur perilaku AI dari satu tempat.</p>
@@ -44,7 +44,7 @@ export default function AdminLayout({
         <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-28 pt-6 sm:px-6 md:px-10 md:py-10 lg:px-14">
         {children}
         </main>
-        <AdminNav />
+        <AdminNav variant="mobile" />
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import makeWASocket, {
   type WASocket,
   type WAMessage,
 } from '@whiskeysockets/baileys';
+import { fetchLatestWaWebVersion } from '@whiskeysockets/baileys/lib/Utils/generics.js';
 import pino from 'pino';
 import QRCode from 'qrcode';
 import * as qrcode from 'qrcode-terminal';
@@ -87,8 +88,11 @@ async function handleMessage(sock: WASocket, msg: WAMessage) {
 async function connectToWhatsApp(): Promise<void> {
   await updateWhatsAppConnection({ status: 'starting', qr: null, lastError: null });
   const { state, saveCreds } = await loadAuthState('auth_info_baileys');
+  const { version, isLatest } = await fetchLatestWaWebVersion();
+  console.log(`[BOT] Using WhatsApp Web version ${version.join('.')} (${isLatest ? 'latest' : 'fallback'})`);
   const sock = makeWASocket({
     auth: state,
+    version,
     logger: pino({ level: process.env.LOG_LEVEL || 'info' }),
     browser: ['Rendy Assistant', 'Chrome', '1.0.0'],
     markOnlineOnConnect: false,
