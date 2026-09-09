@@ -12,11 +12,8 @@ export default async function PersonaPage() {
     .single();
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Persona & Settings</h2>
-      <p className="text-gray-600">
-        Atur bagaimana AI Anda merespons pesan (System Prompt).
-      </p>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">Gaya bicara</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Persona AI</h1><p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Atur nada bicara dan aturan jawaban yang dipakai bot di setiap chat.</p></div>
       
       <PersonaForm initialPrompt={data?.value || ''} />
     </div>

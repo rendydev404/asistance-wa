@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Home, BookOpen, Settings, MessageSquare, ShieldAlert } from 'lucide-react';
+import { Bot, ExternalLink } from 'lucide-react';
 import LogoutButton from './LogoutButton';
+import AdminNav from './AdminNav';
 
 export default function AdminLayout({
   children,
@@ -8,43 +9,43 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md flex flex-col">
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between gap-2">
-            <h1 className="text-xl font-bold text-gray-800">WA AI Admin</h1>
+    <div className="min-h-screen bg-[#07111f] text-slate-100 md:flex">
+      <aside className="hidden w-72 shrink-0 border-r border-white/8 bg-[#091625] p-5 md:flex md:flex-col">
+        <div className="mb-10 flex items-center gap-3 px-2">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-300 text-slate-950 shadow-lg shadow-teal-300/10">
+            <Bot className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold tracking-tight text-white">Asist WA</p>
+            <p className="text-xs text-slate-500">Admin console</p>
+          </div>
+        </div>
+        <AdminNav />
+        <div className="mt-auto rounded-2xl border border-white/8 bg-white/4 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Live workspace</p>
+          <p className="mt-2 text-sm leading-5 text-slate-300">Pantau koneksi dan atur perilaku AI dari satu tempat.</p>
+          <div className="mt-4 flex items-center justify-between">
+            <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-teal-200">
+              Buka aplikasi <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            </Link>
             <LogoutButton />
           </div>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <Link href="/admin" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
-            <Home className="w-5 h-5" />
-            <span>Dashboard</span>
-          </Link>
-          <Link href="/admin/knowledge" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
-            <BookOpen className="w-5 h-5" />
-            <span>Knowledge Base</span>
-          </Link>
-          <Link href="/admin/persona" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
-            <Settings className="w-5 h-5" />
-            <span>Persona & Settings</span>
-          </Link>
-          <Link href="/admin/logs" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
-            <MessageSquare className="w-5 h-5" />
-            <span>Chat Logs</span>
-          </Link>
-          <Link href="/admin/exclusions" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
-            <ShieldAlert className="w-5 h-5" />
-            <span>Pengecualian AI</span>
-          </Link>
-        </nav>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+        <header className="flex items-center justify-between border-b border-white/8 bg-[#091625]/80 px-4 py-4 backdrop-blur md:hidden">
+          <Link href="/admin" className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-300 text-slate-950"><Bot className="h-5 w-5" aria-hidden="true" /></span>
+            <span className="text-sm font-semibold text-white">Asist WA</span>
+          </Link>
+          <LogoutButton />
+        </header>
+        <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-28 pt-6 sm:px-6 md:px-10 md:py-10 lg:px-14">
         {children}
-      </main>
+        </main>
+        <AdminNav />
+      </div>
     </div>
   );
 }

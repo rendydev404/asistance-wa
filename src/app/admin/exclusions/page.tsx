@@ -10,11 +10,7 @@ export default async function ExclusionsPage() {
     .order('created_at', { ascending: false });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-800">Pengecualian Nomor WhatsApp</h2>
-        <p className="text-gray-500 mt-1">Kelola nomor yang tidak boleh dijawab otomatis oleh AI.</p>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-6"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-200">Kontrol percakapan</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Nomor yang dilewati AI</h1><p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">Masukkan nomor WhatsApp; pesan dari nomor aktif di daftar ini langsung dibiarkan untuk ditangani admin.</p></div>
       <ExclusionManager initialItems={data ?? []} />
     </div>
   );

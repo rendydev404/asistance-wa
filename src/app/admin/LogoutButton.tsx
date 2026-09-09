@@ -12,7 +12,7 @@ export default function LogoutButton() {
   }
 
   return (
-    <button onClick={logout} className="text-sm text-gray-500 hover:text-red-600">
+    <button onClick={logout} className="inline-flex min-h-11 items-center rounded-xl px-3 text-xs font-semibold text-slate-400 transition hover:bg-red-400/10 hover:text-red-300">
       Keluar
     </button>
   );

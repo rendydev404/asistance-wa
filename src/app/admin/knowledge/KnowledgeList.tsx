@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Trash2, Plus } from 'lucide-react';
+import { BookOpen, Check, LoaderCircle, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type KBItem = {
@@ -59,70 +59,79 @@ export default function KnowledgeList({ initialItems }: { initialItems: KBItem[]
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       {/* Form Tambah */}
-      <form onSubmit={handleAdd} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
-        <h3 className="text-lg font-semibold">Tambah Fakta Baru</h3>
+      <form onSubmit={handleAdd} className="rounded-[2rem] border border-white/8 bg-[#0e1c2d] p-5 shadow-xl shadow-black/10 sm:p-6">
+        <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-teal-300/12 text-teal-200"><BookOpen className="h-5 w-5" aria-hidden="true" /></span><div><h2 className="text-lg font-semibold text-white">Tambah fakta</h2><p className="mt-1 text-sm leading-5 text-slate-400">Tulis satu informasi yang bisa langsung dirujuk AI.</p></div></div>
         
+        <div className="mt-6 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Pertanyaan / Topik (Opsional)</label>
+          <label className="mb-2 block text-sm font-semibold text-slate-200" htmlFor="knowledge-question">Pertanyaan atau topik <span className="font-normal text-slate-500">(opsional)</span></label>
           <input 
+            id="knowledge-question"
             type="text" 
             value={question}
             onChange={e => setQuestion(e.target.value)}
-            placeholder="Misal: Berapa harga jasa pembuatan website?"
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Contoh: Berapa harga pembuatan website?"
+            className="min-h-12 w-full rounded-2xl border border-white/10 bg-slate-950/45 px-4 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-teal-300/60"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Jawaban / Fakta (Wajib)</label>
+          <label className="mb-2 block text-sm font-semibold text-slate-200" htmlFor="knowledge-answer">Jawaban atau fakta <span className="font-normal text-rose-300">(wajib)</span></label>
           <textarea 
+            id="knowledge-answer"
             required
             value={answer}
             onChange={e => setAnswer(e.target.value)}
             rows={3}
-            placeholder="Misal: Harga jasa pembuatan website mulai dari Rp 5.000.000 tergantung fitur."
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            placeholder="Contoh: Harga mulai dari Rp5.000.000, tergantung fitur yang dipilih."
+            className="w-full resize-y rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm leading-6 text-white placeholder:text-slate-600 outline-none transition focus:border-teal-300/60"
           />
         </div>
         
         <button 
           type="submit" 
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center disabled:opacity-50"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-teal-300 px-5 text-sm font-bold text-slate-950 transition hover:bg-teal-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
-          {loading ? 'Memproses AI Embedding...' : (
+          {loading ? <><LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" /> Menyimpan fakta...</> : (
             <>
-              <Plus className="w-4 h-4 mr-2" />
-              Simpan Fakta
+              <Plus className="h-4 w-4" aria-hidden="true" /> Simpan fakta
             </>
           )}
         </button>
+        </div>
       </form>
 
       {/* Daftar */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-hidden rounded-[2rem] border border-white/8 bg-[#0e1c2d]">
+        <div className="flex items-center justify-between border-b border-white/8 px-5 py-4 sm:px-6"><div><h2 className="font-semibold text-white">Fakta tersimpan</h2><p className="mt-1 text-xs text-slate-500">{items.length} item tersedia untuk AI</p></div><Check className="h-5 w-5 text-teal-300" aria-hidden="true" /></div>
+        <div className="divide-y divide-white/8 md:hidden">
+          {items.length === 0 ? <p className="p-6 text-sm text-slate-500">Belum ada fakta. Tambahkan yang pertama di atas.</p> : items.map((item) => (
+            <article key={item.id} className="p-5"><div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="text-xs font-bold uppercase tracking-wider text-teal-300">{item.question || 'Fakta umum'}</p><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-300">{item.answer}</p></div><button onClick={() => handleDelete(item.id)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 transition hover:bg-red-400/10 hover:text-red-300" aria-label="Hapus fakta"><Trash2 className="h-4 w-4" aria-hidden="true" /></button></div></article>
+          ))}
+        </div>
+        <table className="hidden min-w-full divide-y divide-white/8 md:table">
+          <thead className="bg-white/4">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pertanyaan</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fakta / Jawaban</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Pertanyaan</th>
+              <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Fakta / Jawaban</th>
+              <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Aksi</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-white/8">
             {items.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-6 py-4 text-center text-gray-500">Belum ada fakta yang disimpan.</td>
+                <td colSpan={3} className="px-6 py-8 text-center text-sm text-slate-500">Belum ada fakta yang disimpan.</td>
               </tr>
             ) : items.map((item) => (
               <tr key={item.id}>
-                <td className="px-6 py-4 text-sm text-gray-900">{item.question || '-'}</td>
-                <td className="px-6 py-4 text-sm text-gray-900">{item.answer}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-900">
-                    <Trash2 className="w-5 h-5" />
+                <td className="px-6 py-5 text-sm text-slate-200">{item.question || '-'}</td>
+                <td className="max-w-xl whitespace-pre-wrap px-6 py-5 text-sm leading-6 text-slate-300">{item.answer}</td>
+                <td className="whitespace-nowrap px-6 py-5 text-right text-sm font-medium">
+                  <button onClick={() => handleDelete(item.id)} className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-slate-500 hover:bg-red-400/10 hover:text-red-300" aria-label="Hapus fakta">
+                    <Trash2 className="h-5 w-5" aria-hidden="true" />
                   </button>
                 </td>
               </tr>
