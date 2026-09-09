@@ -104,6 +104,22 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['ai_exclusions']['Insert']>;
         Relationships: [];
       };
+      ai_excluded_contacts: {
+        Row: {
+          id: string;
+          phone_number: string;
+          active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          phone_number: string;
+          active?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['ai_excluded_contacts']['Insert']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

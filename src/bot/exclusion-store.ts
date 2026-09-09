@@ -1,36 +1,22 @@
 import { getSupabaseAdmin } from '../lib/supabase';
+import { phoneNumberFromJid } from '../lib/phone';
 
-export type AIExclusion = {
-  id: string;
-  phrase: string;
-  match_type: 'contains' | 'exact' | 'starts_with';
-  action: 'silent' | 'human';
-  active: boolean;
-};
+export async function isPhoneExcluded(remoteJid: string): Promise<boolean> {
+  const phoneNumber = phoneNumberFromJid(remoteJid);
+  if (!phoneNumber) return false;
 
-function normalize(value: string) {
-  return value.trim().toLocaleLowerCase('id-ID');
-}
-
-export async function findMatchingExclusion(message: string): Promise<AIExclusion | null> {
   try {
     const { data, error } = await getSupabaseAdmin()
-      .from('ai_exclusions')
-      .select('id, phrase, match_type, action, active')
+      .from('ai_excluded_contacts')
+      .select('id')
+      .eq('phone_number', phoneNumber)
       .eq('active', true)
-      .order('created_at', { ascending: true });
+      .maybeSingle();
 
     if (error) throw error;
-
-    const normalizedMessage = normalize(message);
-    return (data as AIExclusion[]).find((rule) => {
-      const phrase = normalize(rule.phrase);
-      if (rule.match_type === 'exact') return normalizedMessage === phrase;
-      if (rule.match_type === 'starts_with') return normalizedMessage.startsWith(phrase);
-      return normalizedMessage.includes(phrase);
-    }) ?? null;
+    return Boolean(data);
   } catch (error) {
-    console.error('[BOT] Failed to load AI exclusions:', error);
-    return null;
+    console.error('[BOT] Failed to check excluded WhatsApp number:', error);
+    return false;
   }
 }

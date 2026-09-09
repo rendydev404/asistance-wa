@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isAdminAuthorized } from '@/lib/auth';
 import { getSupabaseAdmin } from '@/lib/supabase';
-
-const matchTypes = ['contains', 'exact', 'starts_with'] as const;
-const actions = ['silent', 'human'] as const;
+import { normalizePhoneNumber } from '@/lib/phone';
 
 function unauthorized() {
   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -13,7 +11,7 @@ export async function GET(request: Request) {
   if (!isAdminAuthorized(request)) return unauthorized();
 
   const { data, error } = await getSupabaseAdmin()
-    .from('ai_exclusions')
+    .from('ai_excluded_contacts')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -26,23 +24,17 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const phrase = typeof body.phrase === 'string' ? body.phrase.trim() : '';
-    const matchType = body.match_type ?? 'contains';
-    const action = body.action ?? 'silent';
+    const phoneNumber = typeof body.phone_number === 'string'
+      ? normalizePhoneNumber(body.phone_number)
+      : null;
 
-    if (!phrase || phrase.length > 200) {
-      return NextResponse.json({ error: 'Kata/frasa wajib diisi dan maksimal 200 karakter' }, { status: 400 });
-    }
-    if (!matchTypes.includes(matchType)) {
-      return NextResponse.json({ error: 'Tipe pencocokan tidak valid' }, { status: 400 });
-    }
-    if (!actions.includes(action)) {
-      return NextResponse.json({ error: 'Aksi pengecualian tidak valid' }, { status: 400 });
+    if (!phoneNumber) {
+      return NextResponse.json({ error: 'Nomor WhatsApp Indonesia tidak valid' }, { status: 400 });
     }
 
     const { data, error } = await getSupabaseAdmin()
-      .from('ai_exclusions')
-      .insert({ phrase, match_type: matchType, action, active: true })
+      .from('ai_excluded_contacts')
+      .upsert({ phone_number: phoneNumber, active: true }, { onConflict: 'phone_number' })
       .select()
       .single();
 
@@ -63,7 +55,7 @@ export async function PATCH(request: Request) {
     }
 
     const { data, error } = await getSupabaseAdmin()
-      .from('ai_exclusions')
+      .from('ai_excluded_contacts')
       .update({ active: body.active })
       .eq('id', body.id)
       .select()
@@ -82,7 +74,7 @@ export async function DELETE(request: Request) {
   const id = new URL(request.url).searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID wajib diisi' }, { status: 400 });
 
-  const { error } = await getSupabaseAdmin().from('ai_exclusions').delete().eq('id', id);
+  const { error } = await getSupabaseAdmin().from('ai_excluded_contacts').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

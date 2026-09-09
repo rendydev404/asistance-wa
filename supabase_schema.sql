@@ -150,3 +150,16 @@ create index if not exists ai_exclusions_active_idx
   on public.ai_exclusions(active);
 
 alter table public.ai_exclusions enable row level security;
+
+-- Daftar nomor WhatsApp yang selalu dikecualikan dari balasan AI.
+create table if not exists public.ai_excluded_contacts (
+  id uuid default gen_random_uuid() primary key,
+  phone_number text not null unique check (phone_number ~ '^62[0-9]{8,13}$'),
+  active boolean not null default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists ai_excluded_contacts_active_phone_idx
+  on public.ai_excluded_contacts(phone_number, active);
+
+alter table public.ai_excluded_contacts enable row level security;

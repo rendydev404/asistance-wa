@@ -12,7 +12,7 @@ import pino from 'pino';
 import QRCode from 'qrcode';
 import * as qrcode from 'qrcode-terminal';
 import { updateWhatsAppConnection } from './connection-store';
-import { findMatchingExclusion } from './exclusion-store';
+import { isPhoneExcluded } from './exclusion-store';
 import { AIHandler } from './ai-handler';
 import { SessionStore } from './session-store';
 import { StateManager } from './state-manager';
@@ -33,6 +33,12 @@ async function handleMessage(sock: WASocket, msg: WAMessage) {
 
   const textMessage = getText(msg);
   if (!textMessage) return;
+
+  if (await isPhoneExcluded(remoteJid)) {
+    console.log(`[BOT] AI excluded for WhatsApp number ${remoteJid}`);
+    await sessionStore.markHuman(remoteJid);
+    return;
+  }
 
   if (msg.key.fromMe) {
     if (botMessageIds.delete(messageId)) return;
@@ -61,13 +67,6 @@ async function handleMessage(sock: WASocket, msg: WAMessage) {
   console.log(`[BOT] Waiting 10s for human handover...`);
   const shouldReply = await stateManager.waitForHandover(remoteJid);
   if (!shouldReply) return;
-
-  const exclusion = await findMatchingExclusion(textMessage);
-  if (exclusion) {
-    console.log(`[BOT] AI exclusion matched: ${exclusion.phrase} (${exclusion.action})`);
-    if (exclusion.action === 'human') await sessionStore.markHuman(remoteJid);
-    return;
-  }
 
   if (!(await sessionStore.claimForAI(remoteJid, messageId))) return;
 
