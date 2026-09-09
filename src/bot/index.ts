@@ -9,7 +9,9 @@ import makeWASocket, {
   type WAMessage,
 } from '@whiskeysockets/baileys';
 import pino from 'pino';
+import QRCode from 'qrcode';
 import * as qrcode from 'qrcode-terminal';
+import { updateWhatsAppConnection } from './connection-store';
 import { AIHandler } from './ai-handler';
 import { SessionStore } from './session-store';
 import { StateManager } from './state-manager';
@@ -76,6 +78,7 @@ async function handleMessage(sock: WASocket, msg: WAMessage) {
 }
 
 async function connectToWhatsApp(): Promise<void> {
+  await updateWhatsAppConnection({ status: 'starting', qr: null, lastError: null });
   const { state, saveCreds } = await loadAuthState('auth_info_baileys');
   const sock = makeWASocket({
     auth: state,
@@ -91,15 +94,34 @@ async function connectToWhatsApp(): Promise<void> {
     if (qr) {
       qrcode.generate(qr, { small: true });
       console.log('Scan the QR code above to connect.');
+      void QRCode.toDataURL(qr, { width: 320, margin: 2 })
+        .then((qrDataUrl) => updateWhatsAppConnection({
+          status: 'qr',
+          qr: qrDataUrl,
+          phoneNumber: null,
+          lastError: null,
+        }))
+        .catch((error) => console.error('[BOT] Failed to generate dashboard QR:', error));
     }
 
     if (connection === 'close') {
       const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
       const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
       console.log('Connection closed, reconnecting:', shouldReconnect);
+      void updateWhatsAppConnection({
+        status: shouldReconnect ? 'disconnected' : 'error',
+        qr: null,
+        lastError: `WhatsApp connection closed (status ${statusCode ?? 'unknown'})`,
+      });
       if (shouldReconnect) void connectToWhatsApp();
     } else if (connection === 'open') {
       console.log('WhatsApp connection opened successfully!');
+      void updateWhatsAppConnection({
+        status: 'connected',
+        qr: null,
+        phoneNumber: sock.user?.id?.split(':')[0] ?? null,
+        lastError: null,
+      });
     }
   });
 
@@ -115,5 +137,10 @@ async function connectToWhatsApp(): Promise<void> {
 
 connectToWhatsApp().catch((error) => {
   console.error('Error starting bot:', error);
+  void updateWhatsAppConnection({
+    status: 'error',
+    qr: null,
+    lastError: error instanceof Error ? error.message : String(error),
+  });
   process.exitCode = 1;
 });

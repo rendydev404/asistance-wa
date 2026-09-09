@@ -64,6 +64,26 @@ export type Database = {
         Update: Partial<{ key: string; value: string }>;
         Relationships: [];
       };
+      whatsapp_connections: {
+        Row: {
+          id: boolean;
+          status: 'starting' | 'qr' | 'connected' | 'disconnected' | 'error';
+          qr: string | null;
+          phone_number: string | null;
+          last_error: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: boolean;
+          status?: 'starting' | 'qr' | 'connected' | 'disconnected' | 'error';
+          qr?: string | null;
+          phone_number?: string | null;
+          last_error?: string | null;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['whatsapp_connections']['Insert']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

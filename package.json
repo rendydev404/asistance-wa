@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "bot:build": "tsc src/bot/index.ts src/bot/state-manager.ts src/bot/ai-handler.ts src/bot/session-store.ts --module commonjs --target es2020 --esModuleInterop --skipLibCheck --outDir dist",
+    "bot:build": "tsc src/bot/index.ts src/bot/state-manager.ts src/bot/ai-handler.ts src/bot/session-store.ts src/bot/connection-store.ts --module commonjs --target es2020 --esModuleInterop --skipLibCheck --outDir dist",
     "bot": "node dist/bot/index.js"
   },
   "dependencies": {
@@ -18,6 +18,7 @@
     "lucide-react": "^1.21.0",
     "next": "16.2.9",
     "pino": "^10.3.1",
+    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
     "@types/qrcode-terminal": "^0.12.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",

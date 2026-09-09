@@ -52,6 +52,21 @@ create table if not exists public.app_settings (
   value text not null
 );
 
+-- Status koneksi WhatsApp dan QR sementara untuk Admin Dashboard.
+create table if not exists public.whatsapp_connections (
+  id boolean primary key default true check (id = true),
+  status text not null default 'starting'
+    check (status in ('starting', 'qr', 'connected', 'disconnected', 'error')),
+  qr text,
+  phone_number text,
+  last_error text,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+insert into public.whatsapp_connections (id, status)
+values (true, 'starting')
+on conflict (id) do nothing;
+
 -- Insert default prompt
 insert into public.app_settings (key, value) values (
   'system_prompt', 
@@ -117,3 +132,4 @@ alter table public.knowledge_base enable row level security;
 alter table public.chat_sessions enable row level security;
 alter table public.chat_messages enable row level security;
 alter table public.app_settings enable row level security;
+alter table public.whatsapp_connections enable row level security;
