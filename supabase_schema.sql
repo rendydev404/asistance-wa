@@ -133,3 +133,20 @@ alter table public.chat_sessions enable row level security;
 alter table public.chat_messages enable row level security;
 alter table public.app_settings enable row level security;
 alter table public.whatsapp_connections enable row level security;
+
+-- Aturan agar pesan tertentu tidak dijawab oleh AI.
+create table if not exists public.ai_exclusions (
+  id uuid default gen_random_uuid() primary key,
+  phrase text not null check (char_length(trim(phrase)) between 1 and 200),
+  match_type text not null default 'contains'
+    check (match_type in ('contains', 'exact', 'starts_with')),
+  action text not null default 'silent'
+    check (action in ('silent', 'human')),
+  active boolean not null default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists ai_exclusions_active_idx
+  on public.ai_exclusions(active);
+
+alter table public.ai_exclusions enable row level security;

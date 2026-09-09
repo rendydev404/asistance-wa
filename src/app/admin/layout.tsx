@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, BookOpen, Settings, MessageSquare } from 'lucide-react';
+import { Home, BookOpen, Settings, MessageSquare, ShieldAlert } from 'lucide-react';
 import LogoutButton from './LogoutButton';
 
 export default function AdminLayout({
@@ -33,6 +33,10 @@ export default function AdminLayout({
           <Link href="/admin/logs" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
             <MessageSquare className="w-5 h-5" />
             <span>Chat Logs</span>
+          </Link>
+          <Link href="/admin/exclusions" className="flex items-center space-x-2 text-gray-700 hover:bg-gray-100 p-2 rounded-md">
+            <ShieldAlert className="w-5 h-5" />
+            <span>Pengecualian AI</span>
           </Link>
         </nav>
       </aside>

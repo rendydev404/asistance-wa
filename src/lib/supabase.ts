@@ -84,6 +84,26 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['whatsapp_connections']['Insert']>;
         Relationships: [];
       };
+      ai_exclusions: {
+        Row: {
+          id: string;
+          phrase: string;
+          match_type: 'contains' | 'exact' | 'starts_with';
+          action: 'silent' | 'human';
+          active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          phrase: string;
+          match_type?: 'contains' | 'exact' | 'starts_with';
+          action?: 'silent' | 'human';
+          active?: boolean;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['ai_exclusions']['Insert']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

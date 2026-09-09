@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "bot:build": "tsc src/bot/index.ts src/bot/state-manager.ts src/bot/ai-handler.ts src/bot/session-store.ts src/bot/connection-store.ts --module commonjs --target es2020 --esModuleInterop --skipLibCheck --outDir dist",
+    "bot:build": "tsc src/bot/index.ts src/bot/state-manager.ts src/bot/ai-handler.ts src/bot/session-store.ts src/bot/connection-store.ts src/bot/exclusion-store.ts --module commonjs --target es2020 --esModuleInterop --skipLibCheck --outDir dist",
     "bot": "node dist/bot/index.js"
   },
   "dependencies": {
